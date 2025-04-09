@@ -39,94 +39,116 @@
 #define RAPP_REALLOC realloc
 #endif
 
-#define RSGL_color rapp_Color
-#define RSGL_area rapp_Area
+#define RSGL_color rapp_color
+#define RSGL_area rapp_area
 
 #define RGFW_IMPLEMENTATION
 #define RGFW_ALLOC RAPP_ALLOC
 #define RGFW_FREE RAPP_FREE
-#define RGFW_bool rapp_Bool
-#define RGFW_point rapp_Point
-#define RGFW_area rapp_Area
-#define RGFW_rect rapp_Rect
+#define RGFW_bool rapp_bool
+#define RGFW_point rapp_point
+#define RGFW_area rapp_area
+#define RGFW_rect rapp_rect
 #include "deps/RGFW.h"
 
+#define RSGLDEF
+#define RSGL_INT_DEFINED
+#define RSGL_BOOL_DEFINED
+#define RSGL_MALLOC RAPP_ALLOC
+#define RSGL_REALLOC RAPP_REALLOC
+#define RSGL_FREE RAPP_FREE
+#define RSGL_bool rapp_bool
+#define RSGL_color rapp_color
+#define RSGL_rect rapp_rect
+#define RSGL_rectF rapp_rectF
+#define RSGL_point rapp_point
+#define RSGL_triangleF rapp_triangleF
+#define RSGL_triangle rapp_triangle
+#define RSGL_triangle3D rapp_triangle3D
+#define RSGL_pointF rapp_pointF
+#define RSGL_point3D rapp_point3D
+#define RSGL_circle rapp_circle
+#define RSGL_circleF rapp_circleF
+#define RSGL_mat4 rapp_mat4
+#define RSGL_programInfo rapp_programInfo
+#define RSGL_texture rapp_texture
+#define RFont_texture rapp_texture
+#define RFont_font rapp_font
+#define RSGL_area rapp_area
 
+typedef u8 b8;
 
-/* prviate API */
-rapp_Window* rapp_createWindowSrc(const char* name, rapp_Rect rect, rapp_WindowFlags flags, rapp_Window* win);
-void rapp_Window_closeSrc(rapp_Window* win);
-
-/* RGFW */
-void RSGL_draw(void);
-void RSGL_updateSize(RSGL_area r);
-void RSGL_free();
-void RSGL_init(RSGL_area r, void* proc);
-void RSGL_clear(RSGL_color color);
+#include "deps/RSGL.h"
+#ifdef RAPP_RENDERER_OPENGL
+#include "deps/RSGL_gl.h"
+#else
+#error no renderer defined
+#endif
 
 /* */
-void rapp_Window_draw(rapp_Window* win) {
+void rapp_window_draw(rapp_window* win) {
     RSGL_draw();
-    rapp_Window_swapBuffers(win);
+    rapp_window_swapBuffers(win);
 }
 
-void rapp_Window_clear(rapp_Window* win, rapp_Color color) {
-    rapp_Window_makeCurrent(win);
+void rapp_window_clear(rapp_window* win, rapp_color color) {
+    rapp_window_makeCurrent(win);
 
     RSGL_updateSize(RAPP_AREA(win->r.w, win->r.h));
     RSGL_clear(color);
 }
 
-rapp_Window* rapp_createWindow(const char* name,  rapp_Rect rect,  rapp_WindowFlags flags) {
-    rapp_Window* out = RAPP_ALLOC(sizeof(rapp_Window));
+rapp_window* rapp_createWindow(const char* name,  rapp_rect rect,  rapp_windowFlags flags) {
+    rapp_window* out = RAPP_ALLOC(sizeof(rapp_window));
     return rapp_createWindowPtr(name, rect, flags, out); 
 }
 
 i32 windowCount = 0;
 
-rapp_Window* rapp_createWindowPtr(const char* name, rapp_Rect rect, rapp_WindowFlags flags, rapp_Window* win) {    
-    win = rapp_createWindowSrc(name, rect, flags, win);
-    
+rapp_window* rapp_createWindowPtr(const char* name, rapp_rect rect, rapp_windowFlags flags, rapp_window* win) {    
+    win->src = RGFW_createWindow(name, rect, flags);
+    win->r = ((RGFW_window*)(RGFW_window*)win->src)->r;
+
     if (windowCount == 0) {
-        RSGL_init(RAPP_AREA(win->r.w, win->r.h), rapp_getProcAddress);
-        rapp_Audio_init();
+        #ifdef RAPP_RENDERER_OPENGL
+            RSGL_init(RAPP_AREA(win->r.w, win->r.h), rapp_getProcAddress, RSGL_GL_renderer());
+        #endif
     }
     
     windowCount++;
-    rapp_Window_makeCurrent(win);
+    rapp_window_makeCurrent(win);
     return win;
 }
 
-void rapp_Window_close(rapp_Window* win) {
+void rapp_window_close(rapp_window* win) {
     windowCount--;
     if (windowCount) {
         RSGL_free();
-        rapp_Audio_free();
     }
 
-    rapp_Window_closeSrc(win);
+    RGFW_window_close((RGFW_window*)win->src);
 }
 
-void rapp_Window_swapBuffers(rapp_Window* win) {
+void rapp_window_swapBuffers(rapp_window* win) {
     RGFW_window_swapBuffers((RGFW_window*)win->src);
 }
 
 
-void rapp_Window_vsync(rapp_Window* win, rapp_Bool enable) {
+void rapp_window_vsync(rapp_window* win, rapp_bool enable) {
     RGFW_window_swapInterval((RGFW_window*)win->src, enable);
 }
 
-rapp_Monitor* rapp_getMonitors(size_t* len) {
-    return (rapp_Monitor*)RGFW_getMonitors(len);
+rapp_monitor* rapp_getMonitors(size_t* len) {
+    return (rapp_monitor*)RGFW_getMonitors(len);
 }
 
-rapp_Monitor rapp_getPrapp_maryMonitor(void) {
-    RGFW_monitor mon = RGFW_getPrapp_maryMonitor();
-    rapp_Monitor rapp_mon = *(rapp_Monitor*)&mon;
+rapp_monitor rapp_getPrimaryMonitor(void) {
+    RGFW_monitor mon = RGFW_getPrimaryMonitor();
+    rapp_monitor rapp_mon = *(rapp_monitor*)&mon;
     return rapp_mon;
 }
 
-rapp_Bool rapp_Monitor_requestMode(rapp_Monitor mon, rapp_MonitorMode mode, rapp_modeRequest request) {
+rapp_bool rapp_monitor_requestMode(rapp_monitor mon, rapp_monitorMode mode, rapp_modeRequest request) {
     RGFW_monitor rgfw_mon = *(RGFW_monitor*)&mon;
     RGFW_monitorMode rgfw_mode = *(RGFW_monitorMode*)&mode;
     RGFW_modeRequest rgfw_request = *(RGFW_modeRequest*)&request;
@@ -135,14 +157,14 @@ rapp_Bool rapp_Monitor_requestMode(rapp_Monitor mon, rapp_MonitorMode mode, rapp
     return RGFW_monitor_requestMode(rgfw_mon, rgfw_mode, rgfw_request);
 }
 
-rapp_Bool rapp_Monitor_ModeCompare(rapp_MonitorMode mon, rapp_MonitorMode mon2, rapp_modeRequest request) {
+rapp_bool rapp_monitor_ModeCompare(rapp_monitorMode mon, rapp_monitorMode mon2, rapp_modeRequest request) {
     RGFW_monitorMode rgfw_mon = *(RGFW_monitorMode*)&mon;
     RGFW_monitorMode rgfw_mon2 = *(RGFW_monitorMode*)&mon2;
 
     return RGFW_monitorModeCompare(rgfw_mon, rgfw_mon2, request);
 }
 
-rapp_mouse* rapp_loadMouse(u8* icon, rapp_Area a, i32 channels) {
+rapp_mouse* rapp_loadMouse(u8* icon, rapp_area a, i32 channels) {
     return RGFW_loadMouse(icon, a, channels);
 }
 
@@ -150,124 +172,114 @@ void rapp_freeMouse(rapp_mouse* mouse) {
     RGFW_freeMouse(mouse);
 }
 
-rapp_Bool rapp_Monitor_scaleToWindow(rapp_Monitor mon, rapp_Window* win) {
+rapp_bool rapp_monitor_scaleToWindow(rapp_monitor mon, rapp_window* win) {
     RGFW_monitor rgfw_mon = *(RGFW_monitor*)&mon;
     return RGFW_monitor_scaleToWindow(rgfw_mon, (RGFW_window*)win->src);
 }
 
-rapp_Window* rapp_createWindowSrc(const char* name, rapp_Rect rect, rapp_WindowFlags flags, rapp_Window* win) {    
-    win->src = RGFW_createWindow(name, rect, flags);
-    win->r = ((RGFW_window*)(RGFW_window*)win->src)->r;
-    return win;
-}
-
-void rapp_Window_closeSrc(rapp_Window* win) {
-    RGFW_window_close((RGFW_window*)win->src);
-}
-
-void rapp_Window_setShouldClose(rapp_Window* win, rapp_Bool shouldClose) {
+void rapp_window_setShouldClose(rapp_window* win, rapp_bool shouldClose) {
     RGFW_window_setShouldClose((RGFW_window*)win->src, shouldClose);
 }
 
-RGFW_bool rapp_Window_shouldClose(rapp_Window* win) {
+RGFW_bool rapp_window_shouldClose(rapp_window* win) {
     return RGFW_window_shouldClose((RGFW_window*)win->src);
 }
 
-rapp_Area rapp_getScreenSize(void) {
+rapp_area rapp_getScreenSize(void) {
     return RGFW_getScreenSize();
 }
 
 
-rapp_Event* rapp_Window_checkEvent(rapp_Window* win) {
+rapp_event* rapp_window_checkEvent(rapp_window* win) {
     RGFW_event* ev = RGFW_window_checkEvent((RGFW_window*)win->src);
     if (ev == NULL) return NULL;
     
-    win->event = *(rapp_Event*)&((RGFW_window*)((RGFW_window*)win->src))->event;
+    win->event = *(rapp_event*)&((RGFW_window*)((RGFW_window*)win->src))->event;
     win->r = ((RGFW_window*)((RGFW_window*)win->src))->r;
 
     return &win->event;
 }
 
-void rapp_Window_eventWait(rapp_Window* win, u32 waitMS) {
+void rapp_window_eventWait(rapp_window* win, u32 waitMS) {
     RGFW_window_eventWait((RGFW_window*)win->src, waitMS);
 }
 
-rapp_Point rapp_getGlobalMousePoint(void) {
+rapp_point rapp_getGlobalMousePoint(void) {
     return RGFW_getGlobalMousePoint();
 }
 
-rapp_Point rapp_Window_getMousePoint(rapp_Window* win) {
+rapp_point rapp_window_getMousePoint(rapp_window* win) {
     return RGFW_window_getMousePoint((RGFW_window*)win->src);
 }
 
-void rapp_Window_showMouse(rapp_Window* win, rapp_Bool show) {
+void rapp_window_showMouse(rapp_window* win, rapp_bool show) {
     RGFW_window_showMouse((RGFW_window*)win->src, show);
 }
 
-rapp_Bool rapp_Window_mouseHidden(rapp_Window* win) {
+rapp_bool rapp_window_mouseHidden(rapp_window* win) {
     return RGFW_window_mouseHidden((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isFullscreen(rapp_Window* win) {
+rapp_bool rapp_window_isFullscreen(rapp_window* win) {
     return RGFW_window_isFullscreen((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isHidden(rapp_Window* win) {
+rapp_bool rapp_window_isHidden(rapp_window* win) {
     return RGFW_window_isHidden((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isMinimized(rapp_Window* win) {
+rapp_bool rapp_window_isMinimized(rapp_window* win) {
     return RGFW_window_isMinimized((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isMaximized(rapp_Window* win) {
+rapp_bool rapp_window_isMaximized(rapp_window* win) {
     return RGFW_window_isMaximized((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isFloating(rapp_Window* win) {
+rapp_bool rapp_window_isFloating(rapp_window* win) {
     return RGFW_window_isFloating((RGFW_window*)win->src);
 }
 
-rapp_Monitor rapp_Window_getMonitor(rapp_Window* win) {
+rapp_monitor rapp_window_getMonitor(rapp_window* win) {
     RGFW_monitor mon = RGFW_window_getMonitor((RGFW_window*)win->src);
-    rapp_Monitor rapp_Mon = *(rapp_Monitor*)&mon;
+    rapp_monitor rapp_Mon = *(rapp_monitor*)&mon;
     return rapp_Mon;
 }
 
 
-rapp_Bool rapp_isPressed(rapp_Window* win, rapp_key key) {
+rapp_bool rapp_isPressed(rapp_window* win, rapp_key key) {
     return RGFW_isPressed((RGFW_window*)win->src, key);
 }
 
-rapp_Bool rapp_wasPressed(rapp_Window* win, rapp_key key) {
+rapp_bool rapp_wasPressed(rapp_window* win, rapp_key key) {
     return RGFW_wasPressed((RGFW_window*)win->src, key);
 }
 
-rapp_Bool rapp_isHeld(rapp_Window* win, rapp_key key) {
+rapp_bool rapp_isHeld(rapp_window* win, rapp_key key) {
     return RGFW_isHeld((RGFW_window*)win->src, key);
 }
 
-rapp_Bool rapp_isReleased(rapp_Window* win, rapp_key key) {
+rapp_bool rapp_isReleased(rapp_window* win, rapp_key key) {
     return RGFW_isReleased((RGFW_window*)win->src, key);
 }
 
-rapp_Bool rapp_isClicked(rapp_Window* win, rapp_key key) {
+rapp_bool rapp_isClicked(rapp_window* win, rapp_key key) {
     return RGFW_isClicked((RGFW_window*)win->src, key);
 }
 
-rapp_Bool rapp_isMousePressed(rapp_Window* win, rapp_mouseButton button) {
+rapp_bool rapp_isMousePressed(rapp_window* win, rapp_mouseButton button) {
     return RGFW_isMousePressed((RGFW_window*)win->src, button);
 }
 
-rapp_Bool rapp_isMouseHeld(rapp_Window* win, rapp_mouseButton button) {
+rapp_bool rapp_isMouseHeld(rapp_window* win, rapp_mouseButton button) {
     return RGFW_isMouseHeld((RGFW_window*)win->src, button);
 }
 
-rapp_Bool rapp_isMouseReleased(rapp_Window* win, rapp_mouseButton button) {
+rapp_bool rapp_isMouseReleased(rapp_window* win, rapp_mouseButton button) {
     return RGFW_isMouseReleased((RGFW_window*)win->src, button);
 }
 
-rapp_Bool rapp_wasMousePressed(rapp_Window* win, rapp_mouseButton button) {
+rapp_bool rapp_wasMousePressed(rapp_window* win, rapp_mouseButton button) {
     return RGFW_wasMousePressed((RGFW_window*)win->src, button);
 }
 
@@ -281,15 +293,15 @@ rapp_ssize_t rapp_readClipboardPtr(char* str, size_t strCapacity) {
     return RGFW_readClipboardPtr(str, strCapacity);
 }
 
-void rapp_wrapp_teClipboard(const char* text, u32 textLen) {
-    RGFW_wrapp_teClipboard(text, textLen);
+void rapp_writeClipboard(const char* text, u32 textLen) {
+    RGFW_writeClipboard(text, textLen);
 }
 
-size_t rapp_getGamepadCount(rapp_Window* win) {
+size_t rapp_getGamepadCount(rapp_window* win) {
     return RGFW_getGamepadCount((RGFW_window*)win->src);
 }
 
-rapp_gamepadType rapp_getGamepadType(rapp_Window* win, u16 controller) {
+rapp_gamepadType rapp_getGamepadType(rapp_window* win, u16 controller) {
     return RGFW_getGamepadType((RGFW_window*)win->src, controller);
 }
 
@@ -330,163 +342,163 @@ void rapp_setGLHint(rapp_glHints hint, i32 value) {
     RGFW_setGLHint(hint, value);
 }
 
-void rapp_Window_makeCurrent(rapp_Window* win) {
+void rapp_window_makeCurrent(rapp_window* win) {
     RGFW_window_makeCurrent((RGFW_window*)win->src);
 }
 
-const char* rapp_getGamepadName(rapp_Window* win, u16 controller) {
+const char* rapp_getGamepadName(rapp_window* win, u16 controller) {
     return RGFW_getGamepadName((RGFW_window*)win->src, controller);
 }
 
-rapp_Point rapp_getGamepadAxis(rapp_Window* win, u16 controller, u16 whichAxis) {
+rapp_point rapp_getGamepadAxis(rapp_window* win, u16 controller, u16 whichAxis) {
     return RGFW_getGamepadAxis((RGFW_window*)win->src, controller, whichAxis);
 }
 
-u32 rapp_wasPressedGamepad(rapp_Window* win, u8 controller, rapp_gamepadCodes button) {
+u32 rapp_wasPressedGamepad(rapp_window* win, u8 controller, rapp_gamepadCodes button) {
     return RGFW_wasPressedGamepad((RGFW_window*)win->src, controller, button);
 }
 
-u32 rapp_isHeldGamepad(rapp_Window* win, u8 controller, rapp_gamepadCodes button) {
+u32 rapp_isHeldGamepad(rapp_window* win, u8 controller, rapp_gamepadCodes button) {
     return RGFW_isHeldGamepad((RGFW_window*)win->src, controller, button);
 }
 
-u32 rapp_isReleasedGamepad(rapp_Window* win, u8 controller, rapp_gamepadCodes button) {
+u32 rapp_isReleasedGamepad(rapp_window* win, u8 controller, rapp_gamepadCodes button) {
     return RGFW_isReleasedGamepad((RGFW_window*)win->src, controller, button);
 }
 
-u32 rapp_isPressedGamepad(rapp_Window* win, u8 controller, rapp_gamepadCodes button) {
+u32 rapp_isPressedGamepad(rapp_window* win, u8 controller, rapp_gamepadCodes button) {
     return RGFW_isPressedGamepad((RGFW_window*)win->src, controller, button);
 }
 
-void rapp_Window_scaleToMonitor(rapp_Window* win) {
+void rapp_window_scaleToMonitor(rapp_window* win) {
     RGFW_window_scaleToMonitor((RGFW_window*)win->src);
 }
 
-void rapp_Window_moveMouse(rapp_Window* win, rapp_Point v) {
+void rapp_window_moveMouse(rapp_window* win, rapp_point v) {
     RGFW_window_moveMouse((RGFW_window*)win->src, v);
 }
 
-void rapp_Window_show(rapp_Window* win) {
+void rapp_window_show(rapp_window* win) {
     RGFW_window_show((RGFW_window*)win->src);
 }
 
-void rapp_Window_hide(rapp_Window* win) {
+void rapp_window_hide(rapp_window* win) {
     RGFW_window_hide((RGFW_window*)win->src);
 }
 
-void rapp_Window_mouseUnhold(rapp_Window* win) {
+void rapp_window_mouseUnhold(rapp_window* win) {
     RGFW_window_mouseUnhold((RGFW_window*)win->src);
 }
 
-void rapp_Window_mouseHold(rapp_Window* win, rapp_Area area) {
+void rapp_window_mouseHold(rapp_window* win, rapp_area area) {
     RGFW_window_mouseHold((RGFW_window*)win->src, area);
 }
 
-rapp_Bool rapp_Window_setMouseDefault(rapp_Window* win) {
+rapp_bool rapp_window_setMouseDefault(rapp_window* win) {
     return RGFW_window_setMouseDefault((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_setMouseStandard(rapp_Window* win, u8 mouse) {
+rapp_bool rapp_window_setMouseStandard(rapp_window* win, u8 mouse) {
     return RGFW_window_setMouseStandard((RGFW_window*)win->src, mouse);
 }
 
-void rapp_Window_setMouse(rapp_Window* win, rapp_mouse* mouse) {
+void rapp_window_setMouse(rapp_window* win, rapp_mouse* mouse) {
     RGFW_window_setMouse((RGFW_window*)win->src, mouse);
 }
 
-rapp_Bool rapp_Window_setIconEx(rapp_Window* win, u8* icon, rapp_Area a, i32 channels, u8 type) {
+rapp_bool rapp_window_setIconEx(rapp_window* win, u8* icon, rapp_area a, i32 channels, u8 type) {
     return RGFW_window_setIconEx((RGFW_window*)win->src, icon, a, channels, type);
 }
 
-rapp_Bool rapp_Window_setIcon(rapp_Window* win, u8* icon, rapp_Area a, i32 channels) {
+rapp_bool rapp_window_setIcon(rapp_window* win, u8* icon, rapp_area a, i32 channels) {
     return RGFW_window_setIcon((RGFW_window*)win->src, icon, a, channels);
 }
 
-void rapp_Window_setName(rapp_Window* win, const char* name) {
+void rapp_window_setName(rapp_window* win, const char* name) {
     RGFW_window_setName((RGFW_window*)win->src, name);
 }
 
-void rapp_Window_setMousePassthrough(rapp_Window* win, rapp_Bool passthrough) {
+void rapp_window_setMousePassthrough(rapp_window* win, rapp_bool passthrough) {
     RGFW_window_setMousePassthrough((RGFW_window*)win->src, passthrough);
 }
 
-rapp_Bool rapp_Window_allowsDND(rapp_Window* win) {
+rapp_bool rapp_window_allowsDND(rapp_window* win) {
     return RGFW_window_allowsDND((RGFW_window*)win->src);
 }
 
-void rapp_Window_setDND(rapp_Window* win, rapp_Bool allow) {
+void rapp_window_setDND(rapp_window* win, rapp_bool allow) {
     RGFW_window_setDND((RGFW_window*)win->src, allow);
 }
 
-rapp_Bool rapp_Window_borderless(rapp_Window* win) {
+rapp_bool rapp_window_borderless(rapp_window* win) {
     return RGFW_window_borderless((RGFW_window*)win->src);
 }
 
-void rapp_Window_setBorder(rapp_Window* win, rapp_Bool border) {
+void rapp_window_setBorder(rapp_window* win, rapp_bool border) {
     RGFW_window_setBorder((RGFW_window*)win->src, border);
 }
 
-void rapp_Window_setOpacity(rapp_Window* win, u8 opacity) {
+void rapp_window_setOpacity(rapp_window* win, u8 opacity) {
     RGFW_window_setOpacity((RGFW_window*)win->src, opacity);
 }
 
-void rapp_Window_setFloating(rapp_Window* win, rapp_Bool floating) {
+void rapp_window_setFloating(rapp_window* win, rapp_bool floating) {
     RGFW_window_setFloating((RGFW_window*)win->src, floating);
 }
 
-void rapp_Window_restore(rapp_Window* win) {
+void rapp_window_restore(rapp_window* win) {
     RGFW_window_restore((RGFW_window*)win->src);
 }
 
-void rapp_Window_minimize(rapp_Window* win) {
+void rapp_window_minimize(rapp_window* win) {
     RGFW_window_minimize((RGFW_window*)win->src);
 }
 
-void rapp_Window_center(rapp_Window* win) {
+void rapp_window_center(rapp_window* win) {
     RGFW_window_center((RGFW_window*)win->src);
 }
 
-void rapp_Window_setFullscreen(rapp_Window* win, rapp_Bool fullscreen) {
+void rapp_window_setFullscreen(rapp_window* win, rapp_bool fullscreen) {
     RGFW_window_setFullscreen((RGFW_window*)win->src, fullscreen);
 }
 
-void rapp_Window_maximize(rapp_Window* win) {
+void rapp_window_maximize(rapp_window* win) {
     RGFW_window_maximize((RGFW_window*)win->src);
 }
 
-void rapp_Window_raise(rapp_Window* win) {
+void rapp_window_raise(rapp_window* win) {
     RGFW_window_raise((RGFW_window*)win->src);
 }
 
-rapp_Bool rapp_Window_isInFocus(rapp_Window* win) {
+rapp_bool rapp_window_isInFocus(rapp_window* win) {
     return RGFW_window_isInFocus((RGFW_window*)win->src);
 }
 
-void rapp_Window_focus(rapp_Window* win) {
+void rapp_window_focus(rapp_window* win) {
     RGFW_window_focus((RGFW_window*)win->src);
 }
 
-void rapp_Window_setMaxSize(rapp_Window* win, rapp_Area a) {
+void rapp_window_setMaxSize(rapp_window* win, rapp_area a) {
     RGFW_window_setMaxSize((RGFW_window*)win->src, a);
 }
 
-void rapp_Window_setMinSize(rapp_Window* win, rapp_Area a) {
+void rapp_window_setMinSize(rapp_window* win, rapp_area a) {
     RGFW_window_setMinSize((RGFW_window*)win->src, a);
 }
 
-void rapp_Window_setAspectRatio(rapp_Window* win, rapp_Area a) {
+void rapp_window_setAspectRatio(rapp_window* win, rapp_area a) {
     RGFW_window_setAspectRatio((RGFW_window*)win->src, a);
 }
 
-void rapp_Window_resize(rapp_Window* win, rapp_Area size) {
+void rapp_window_resize(rapp_window* win, rapp_area size) {
     RGFW_window_resize((RGFW_window*)win->src, size);
 }
 
-void rapp_Window_moveToMonitor(rapp_Window* win, rapp_Monitor m) {
+void rapp_window_moveToMonitor(rapp_window* win, rapp_monitor m) {
     RGFW_window_moveToMonitor((RGFW_window*)win->src, *(RGFW_monitor*)(&m));
 }
 
-void rapp_Window_move(rapp_Window* win, rapp_Point v) {
+void rapp_window_move(rapp_window* win, rapp_point v) {
     RGFW_window_move((RGFW_window*)win->src, v);
 }
 
@@ -494,6 +506,6 @@ void rapp_stopCheckEvents(void) {
     RGFW_stopCheckEvents();
 }
 
-void rapp_Window_setFlags(rapp_Window* win, rapp_WindowFlags flags) {
+void rapp_window_setFlags(rapp_window* win, rapp_windowFlags flags) {
     RGFW_window_setFlags((RGFW_window*)win->src, flags);
 }

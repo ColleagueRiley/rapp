@@ -28,304 +28,304 @@
 
 
 
-#ifndef RI_HEADER
-#define RILIB_SHARED
+#ifndef RAPP_HEADER
+#define RAPP_LIB_SHARED
 #include "rapp.h"
 #endif
 
-#ifndef RI_ALLOC
+#ifndef RAPP_ALLOC
 #include <malloc.h>
-#define RI_ALLOC malloc
-#define RI_FREE free
-#define RI_REALLOC realloc
+#define RAPP_ALLOC malloc
+#define RAPP_FREE free
+#define RAPP_REALLOC realloc
 #endif
 
-#define RSGL_MALLOC RI_ALLOC
-#define RSGL_REALLOC RI_REALLOC
-#define RSGL_FREE RI_FREE
-#define RSGL_bool riBool
-#define RSGL_color riColor
-#define RSGL_rect riRect
-#define RSGL_rectF riRectF
-#define RSGL_point riPoint
-#define RSGL_triangleF riTriangleF
-#define RSGL_triangle riTriangle
-#define RSGL_pointF riPointF
-#define RSGL_point3D riPoint3D
-#define RSGL_point3DF riPoint3DF
-#define RSGL_circle riCircle
-#define RSGL_circleF riCircleF
-#define RSGL_MATRIX RI_MATRIX
-#define RSGL_programInfo riProgramInfo
-#define RSGL_texture riTexture
-#define RSGL_image riImage
-#define RSGL_MATRIX RI_MATRIX
-#define RSGL_area riArea
+#define RSGL_MALLOC RAPP_ALLOC
+#define RSGL_REALLOC RAPP_REALLOC
+#define RSGL_FREE RAPP_FREE
+#define RSGL_bool rapp_bool
+#define RSGL_color rapp_color
+#define RSGL_rect rapp_rect
+#define RSGL_rectF rapp_rectF
+#define RSGL_point rapp_point
+#define RSGL_triangleF rapp_triangleF
+#define RSGL_triangle rapp_triangle
+#define RSGL_triangle3D rapp_triangle3D
+#define RSGL_pointF rapp_pointF
+#define RSGL_point3D rapp_point3D
+#define RSGL_circle rapp_circle
+#define RSGL_circleF rapp_circleF
+#define RSGL_mat4 rapp_mat4
+#define RSGL_programInfo rapp_programInfo
+#define RSGL_texture rapp_texture
+#define RSGL_area rapp_area
 
 
 #define RSGL_NO_DEPS_FOLDER
 #define RSGL_IMPLEMENTATION
-#define RSGLDEF
+#define RSGL_INT_DEFINED
+#define RSGL_BOOL_DEFINED
+
 #include "deps/RSGL.h"
+
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "deps/stb_image.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-#ifdef RI_RENDERER_OPENGL
+#ifdef RAPP_RENDERER_OPENGL
 #include "deps/RSGL_gl.h"
 #else
 #error no renderer defined
 #endif
 
-void ri_setTexture(riTexture texture) {
+void rapp_setTexture(rapp_texture texture) {
     RSGL_setTexture(texture);
 }
 
-void ri_setProgram(u32 program) {
+void rapp_setProgram(u32 program) {
     RSGL_setProgram(program);
 }
 
-void ri_setGradient(float* gradient, size_t len) {
+void rapp_setGradient(float* gradient, size_t len) {
     RSGL_setGradient(gradient, len);
 }
 
-void ri_fill(riBool fill) {
-    RSGL_fill(fill);
+void rapp_fill(rapp_bool fill) {
+
 }
 
-void ri_center(riPoint3DF center) {
-    RSGL_center(center);
+void rapp_center(rapp_point3D center) {
+    RSGL_setCenter(center);
 }
 
-void ri_setClearArgs(riBool clearArgs) {
+void rapp_setClearArgs(rapp_bool clearArgs) {
     RSGL_setClearArgs(clearArgs);
 }
 
-void ri_clearArgs(void) {
+void rapp_clearArgs(void) {
     RSGL_clearArgs();
 }
 
-riRect ri_alignRect(riRect larger, riRect smaller, u16 alignment) {
-    return RSGL_alignRect(larger, smaller, alignment);
+rapp_rect rapp_alignRect(rapp_rect larger, rapp_rect smaller, u16 alignment) {
+
 }
 
-riRectF ri_alignRectF(riRectF larger, riRectF smaller, u16 alignment) {
-    return RSGL_alignRectF(larger, smaller, alignment);
+rapp_rectF rapp_alignRectF(rapp_rectF larger, rapp_rectF smaller, u16 alignment) {
+
 }
 
-RI_MATRIX ri_initDrawMatrix(riPoint3DF center) {
+rapp_mat4 rapp_initDrawMatrix(rapp_point3D center) {
     return RSGL_initDrawMatrix(center);
 }
 
-void ri_clear(riColor color) {
+void rapp_clear(rapp_color color) {
     RSGL_clear(color);
 }
 
-void ri_viewport(i32 x, i32 y, i32 w, i32 h) {
+void rapp_viewport(i32 x, i32 y, i32 w, i32 h) {
     RSGL_renderViewport(x, y, w, h);
 }
 
-riTexture ri_createTexture(u8* bitmap, riArea memsize,  u8 channels) {
+rapp_texture rapp_createTexture(u8* bitmap, rapp_area memsize,  u8 channels) {
     return RSGL_renderCreateTexture(bitmap, memsize, channels);
 }
 
-void ri_deleteTexture(riTexture tex) {
+void rapp_deleteTexture(rapp_texture tex) {
     RSGL_renderDeleteTexture(tex);
 }
 
-void ri_scissorStart(riRectF scissor) {
+void rapp_scissorStart(rapp_rectF scissor) {
     RSGL_renderScissorStart(scissor);
 }
 
-void ri_scissorEnd(void) {
+void rapp_scissorEnd(void) {
     RSGL_renderScissorEnd();
 }
 
-riProgramInfo ri_renderCreateProgram(const char* VShaderCode, const char* FShaderCode, const char* posName, const char* texName, const char* colorName) {
+rapp_programInfo rapp_renderCreateProgram(const char* VShaderCode, const char* FShaderCode, const char* posName, const char* texName, const char* colorName) {
     return RSGL_renderCreateProgram(VShaderCode, FShaderCode, posName, texName, colorName);
 }
 
-void ri_renderDeleteProgram(riProgramInfo program) {
+void rapp_renderDeleteProgram(rapp_programInfo program) {
     RSGL_renderDeleteProgram(program);
 }
 
-void ri_renderSetShaderValue(u32 program, char* var, float value[], u8 len) {
+void rapp_renderSetShaderValue(u32 program, char* var, float value[], u8 len) {
     RSGL_renderSetShaderValue(program, var, value, len);
 }
 
-RI_MATRIX ri_matrixMultiply(float left[16], float right[16]) {
-    return RSGL_matrixMultiply(left, right);
+rapp_mat4 rapp_mat4Multiply(float left[16], float right[16]) {
+    return RSGL_mat4Multiply(left, right);
 }
 
-RI_MATRIX ri_rotatef(RI_MATRIX* matrix, float angle, float x, float y, float z) {
-    return RSGL_rotatef(matrix, angle, x, y, z);
+rapp_mat4 rapp_rotate(rapp_mat4 matrix, float angle, float x, float y, float z) {
+    return RSGL_rotate(matrix.m, angle, x, y, z);
 }
 
-RI_MATRIX ri_translatef(RI_MATRIX* matrix, float x, float y, float z) {
-    return RSGL_translatef(matrix, x, y, z);
+rapp_mat4 rapp_translate(rapp_mat4 matrix, float x, float y, float z) {
+    return RSGL_translate(matrix.m, x, y, z);
 }
 
-void ri_drawPoint(riPoint p, riColor c) {
+void rapp_drawPoint(rapp_point p, rapp_color c) {
     RSGL_drawPoint(p, c);
 }
 
-void ri_drawPointF(riPointF p, riColor c) {
+void rapp_drawPointF(rapp_pointF p, rapp_color c) {
     RSGL_drawPointF(p, c);
 }
 
-void ri_plotLines(riPointF* lines, size_t points_count, u32 thickness, riColor c) {
-    RSGL_plotLines(lines, points_count, thickness, c);
-}
-
-void ri_drawTriangle(riTriangle t, riColor c) {
+void rapp_drawTriangle(rapp_triangle t, rapp_color c) {
     RSGL_drawTriangle(t, c);
 }
 
-void ri_drawTriangleF(riTriangleF t, riColor c) {
+void rapp_drawTriangleF(rapp_triangleF t, rapp_color c) {
     RSGL_drawTriangleF(t, c);
 }
 
-void ri_drawTriangleHyp(riPointF p, size_t angle, float hypotenuse, riColor color) {
+void rapp_drawTriangleHyp(rapp_pointF p, size_t angle, float hypotenuse, rapp_color color) {
     RSGL_drawTriangleHyp(p, angle, hypotenuse, color);
 }
 
-void ri_drawRect(riRect r, riColor c) {
+void rapp_drawRect(rapp_rect r, rapp_color c) {
     RSGL_drawRect(r, c);
 }
 
-void ri_drawRectF(riRectF r, riColor c) {
+void rapp_drawRectF(rapp_rectF r, rapp_color c) {
     RSGL_drawRectF(r, c);
 }
 
-void ri_drawRoundRect(riRect r, riPoint rounding, riColor c) {
+void rapp_drawRoundRect(rapp_rect r, rapp_point rounding, rapp_color c) {
     RSGL_drawRoundRect(r, rounding, c);
 }
 
-void ri_drawRoundRectF(riRectF r, riPoint rounding, riColor c) {
+void rapp_drawRoundRectF(rapp_rectF r, rapp_point rounding, rapp_color c) {
     RSGL_drawRoundRectF(r, rounding, c);
 }
 
-void ri_drawPolygon(riRect r, u32 sides, riColor c) {
+void rapp_drawPolygon(rapp_rect r, u32 sides, rapp_color c) {
     RSGL_drawPolygon(r, sides, c);
 }
 
-void ri_drawPolygonF(riRectF r, u32 sides, riColor c) {
+void rapp_drawPolygonF(rapp_rectF r, u32 sides, rapp_color c) {
     RSGL_drawPolygonF(r, sides, c);
 }
 
-void ri_drawArc(riRect o, riPoint arc, riColor color) {
+void rapp_drawArc(rapp_rect o, rapp_point arc, rapp_color color) {
     RSGL_drawArc(o, arc, color);
 }
 
-void ri_drawArcF(riRectF o, riPointF arc, riColor color) {
+void rapp_drawArcF(rapp_rectF o, rapp_pointF arc, rapp_color color) {
     RSGL_drawArcF(o, arc, color);
 }
 
-void ri_drawCircle(riCircle c, riColor color) {
+void rapp_drawCircle(rapp_circle c, rapp_color color) {
     RSGL_drawCircle(c, color);
 }
 
-void ri_drawCircleF(riCircleF c, riColor color) {
+void rapp_drawCircleF(rapp_circleF c, rapp_color color) {
     RSGL_drawCircleF(c, color);
 }
 
-void ri_drawOval(riRect o, riColor c) {
+void rapp_drawOval(rapp_rect o, rapp_color c) {
     RSGL_drawOval(o, c);
 }
 
-void ri_drawOvalF(riRectF o, riColor c) {
+void rapp_drawOvalF(rapp_rectF o, rapp_color c) {
     RSGL_drawOvalF(o, c);
 }
 
-void ri_drawLine(riPoint p1, riPoint p2, u32 thickness, riColor c) {
+void rapp_drawLine(rapp_point p1, rapp_point p2, u32 thickness, rapp_color c) {
     RSGL_drawLine(p1, p2, thickness, c);
 }
 
-void ri_drawLineF(riPointF p1, riPointF p2, u32 thickness, riColor c) {
+void rapp_drawLineF(rapp_pointF p1, rapp_pointF p2, u32 thickness, rapp_color c) {
     RSGL_drawLineF(p1, p2, thickness, c);
 }
 
 /* 2D outlines */
 
-void ri_drawTriangleOutline(riTriangle t, u32 thickness, riColor c) {
+void rapp_drawTriangleOutline(rapp_triangle t, u32 thickness, rapp_color c) {
     RSGL_drawTriangleOutline(t, thickness, c);
 }
 
-void ri_drawTriangleFOutline(riTriangleF t, u32 thickness, riColor c) {
+void rapp_drawTriangleFOutline(rapp_triangleF t, u32 thickness, rapp_color c) {
     RSGL_drawTriangleFOutline(t, thickness, c);
 }
 
-void ri_drawRectOutline(riRect r, u32 thickness, riColor c) {
+void rapp_drawRectOutline(rapp_rect r, u32 thickness, rapp_color c) {
     RSGL_drawRectOutline(r, thickness, c);
 }
 
-void ri_drawRectFOutline(riRectF r, u32 thickness, riColor c) {
+void rapp_drawRectFOutline(rapp_rectF r, u32 thickness, rapp_color c) {
     RSGL_drawRectFOutline(r, thickness, c);
 }
 
-void ri_drawRoundRectOutline(riRect r, riPoint rounding, u32 thickness, riColor c) {
+void rapp_drawRoundRectOutline(rapp_rect r, rapp_point rounding, u32 thickness, rapp_color c) {
     RSGL_drawRoundRectOutline(r, rounding, thickness, c);
 }
 
-void ri_drawRoundRectFOutline(riRectF r, riPoint rounding, u32 thickness, riColor c) {
+void rapp_drawRoundRectFOutline(rapp_rectF r, rapp_point rounding, u32 thickness, rapp_color c) {
     RSGL_drawRoundRectFOutline(r, rounding, thickness, c);
 }
 
-void ri_drawPolygonOutline(riRect r, u32 sides, u32 thickness, riColor c) {
+void rapp_drawPolygonOutline(rapp_rect r, u32 sides, u32 thickness, rapp_color c) {
     RSGL_drawPolygonOutline(r, sides, thickness, c);
 }
 
-void ri_drawPolygonFOutline(riRectF r, u32 sides, u32 thickness, riColor c) {
+void rapp_drawPolygonFOutline(rapp_rectF r, u32 sides, u32 thickness, rapp_color c) {
     RSGL_drawPolygonFOutline(r, sides, thickness, c);
 }
 
-void ri_drawArcOutline(riRect o, riPoint arc, u32 thickness, riColor color) {
+void rapp_drawArcOutline(rapp_rect o, rapp_point arc, u32 thickness, rapp_color color) {
     RSGL_drawArcOutline(o, arc, thickness, color);
 }
 
-void ri_drawArcFOutline(riRectF o, riPointF arc, u32 thickness, riColor color) {
+void rapp_drawArcFOutline(rapp_rectF o, rapp_pointF arc, u32 thickness, rapp_color color) {
     RSGL_drawArcFOutline(o, arc, thickness, color);
 }
 
-void ri_drawCircleOutline(riCircle c, u32 thickness, riColor color) {
+void rapp_drawCircleOutline(rapp_circle c, u32 thickness, rapp_color color) {
     RSGL_drawCircleOutline(c, thickness, color);
 }
 
-void ri_drawCircleFOutline(riCircleF c, u32 thickness, riColor color) {
+void rapp_drawCircleFOutline(rapp_circleF c, u32 thickness, rapp_color color) {
     RSGL_drawCircleFOutline(c, thickness, color);
 }
 
-void ri_drawOvalFOutline(riRectF o, u32 thickness, riColor c) {
+void rapp_drawOvalFOutline(rapp_rectF o, u32 thickness, rapp_color c) {
     RSGL_drawOvalFOutline(o, thickness, c);
 }
 
-void ri_drawOvalOutline(riRect o, u32 thickness, riColor c) {
+void rapp_drawOvalOutline(rapp_rect o, u32 thickness, rapp_color c) {
     RSGL_drawOvalOutline(o, thickness, c);
 }
 
 
-i32 ri_loadFont(const char* font) {
-    return RSGL_loadFont(font);
+rapp_font* rapp_loadFont(const char* font) {
+    return (rapp_font*)RSGL_loadFont(font);
 }
 
-i32 ri_loadFontPro(const char* font, size_t atlasWidth, size_t atlasHeight) {
-    return RSGL_loadFontPro(font, atlasWidth, atlasHeight);
+rapp_font* rapp_loadFontEx(const char* font, size_t atlasWidth, size_t atlasHeight) {
+    return (rapp_font*)RSGL_loadFontEx(font, atlasWidth, atlasHeight);
 }
 
-void ri_setFont(i32 font) {
-    RSGL_setFont(font);
+void rapp_setFont(rapp_font* font) {
+    RSGL_setFont((RSGL_font*)font);
 }
 
-void ri_drawText(const char* text, riCircle c, riColor color) {
+void rapp_drawText(const char* text, rapp_circle c, rapp_color color) {
     RSGL_drawText(text, c, color);
 }
 
-riArea ri_textArea(const char* text, u32 fontSize, size_t textEnd) {
+rapp_area rapp_textArea(const char* text, u32 fontSize, size_t textEnd) {
     return RSGL_textArea(text, fontSize, textEnd);
 }
 
-riImage ri_drawImage(riImage image, riRect r) {
+rapp_image rapp_drawImage(rapp_image image, rapp_rect r) {
     u32 texture = RSGL_args.texture;
 
     RSGL_setTexture(image.tex);
@@ -333,100 +333,80 @@ riImage ri_drawImage(riImage image, riRect r) {
     RSGL_setTexture(texture);
 }
 
-riImage ri_drawImageFile(const char* image, riRect r) {
-    return RSGL_drawImage(image, r);
+rapp_image rapp_drawImageFile(const char* image, rapp_rect r) {
+
 }
 
 
-riImage ri_loadImage(const char* image) {
-    riImage img;
+rapp_image rapp_loadImage(const char* image) {
+    rapp_image img;
 
     i32 c;
     u8* bitmap = stbi_load(image, (int*)&img.srcSize.w, (int*)&img.srcSize.h, &c, 0);
     img.tex = RSGL_renderCreateTexture(bitmap, (RSGL_area){img.srcSize.w, img.srcSize.h}, c);
 
     RSGL_FREE(bitmap);
-    strcpy(img.file, image);
 
     return img;
 }
 
-riBool riCircleCollidePoint(riCircle c, riPoint p) {
-    return RSGL_circleCollidePoint(c, p);
+rapp_bool rapp_circleCollidePoint(rapp_circle c, rapp_point p) {
 }
 
-riBool riCircleCollideRect(riCircle c, riRect r) {
-    return RSGL_circleCollideRect(c, r);
+rapp_bool rapp_circleCollideRect(rapp_circle c, rapp_rect r) {
 }
 
-riBool riCircleCollide(riCircle cir1, riCircle cir2) {
-    return RSGL_circleCollide(cir1, cir2);
+rapp_bool rapp_circleCollide(rapp_circle cir1, rapp_circle cir2) {
 }
 
-riBool riRectCollidePoint(riRect r, riPoint p) {
-    return RSGL_rectCollidePoint(r, p);
+rapp_bool rapp_rectCollidePoint(rapp_rect r, rapp_point p) {
 }
 
-riBool riRectCollide(riRect r, riRect r2) {
-    return RSGL_rectCollide(r, r2);
+rapp_bool rapp_rectCollide(rapp_rect r, rapp_rect r2) {
 }
 
-riBool riPointCollide(riPoint p, riPoint p2) {
-    return RSGL_pointCollide(p, p2);
+rapp_bool rapp_pointCollide(rapp_point p, rapp_point p2) {
 }
 
 
-riBool riPointCollideF(riPointF p, riPointF p2) {
-    return RSGL_pointCollideF(p, p2);
+rapp_bool rapp_pointCollideF(rapp_pointF p, rapp_pointF p2) {
 }
 
-riBool riRectCollideF(riRectF r, riRectF r2) {
-    return RSGL_rectCollideF(r, r2);
+rapp_bool rapp_rectCollideF(rapp_rectF r, rapp_rectF r2) {
 }
 
-riBool riRectCollidePointF(riRectF r, riPointF p) {
-    return RSGL_rectCollidePointF(r, p);
+rapp_bool rapp_rectCollidePointF(rapp_rectF r, rapp_pointF p) {
 }
 
-riBool riCircleCollideF(riCircleF cir1, riCircleF cir2) {
-    return RSGL_circleCollideF(cir1, cir2);
+rapp_bool rapp_circleCollideF(rapp_circleF cir1, rapp_circleF cir2) {
 }
 
-riBool riCircleCollideRectF(riCircleF c, riRectF r) {
-    return RSGL_circleCollideRectF(c, r);
+rapp_bool rapp_circleCollideRectF(rapp_circleF c, rapp_rectF r) {
 }
 
-riBool riCircleCollidePointF(riCircleF c, riPointF p) {
-    return RSGL_circleCollidePointF(c, p);
+rapp_bool rapp_circleCollidePointF(rapp_circleF c, rapp_pointF p) {
 }
 
-riArea ri_textLineArea(const char* text, u32 fontSize, size_t textEnd, size_t line) {
+rapp_area rapp_textLineArea(const char* text, u32 fontSize, size_t textEnd, size_t line) {
     return RSGL_textLineArea(text, fontSize, textEnd, line);
 }
 
-riCircle ri_alignText_len(const char* str, size_t str_len, riCircle c, riRectF larger, u8 alignment) {
-    return RSGL_alignText_len(str, str_len, c, larger, alignment);
+rapp_circle rapp_alignText_len(const char* str, size_t str_len, rapp_circle c, rapp_rectF larger, u8 alignment) {
 }
 
-riCircle ri_alignText(const char* str, riCircle c, riRectF larger, u8 alignment) {
-    return RSGL_alignText(str, c, larger, alignment);
+rapp_circle rapp_alignText(const char* str, rapp_circle c, rapp_rectF larger, u8 alignment) {
 }
 
-void ri_drawText_pro(const char* text, size_t len, float spacing, riCircle c, riColor color) {
+void rapp_drawText_pro(const char* text, size_t len, float spacing, rapp_circle c, rapp_color color) {
     RSGL_drawText_pro(text, len, spacing, c, color);
 }
 
-void ri_drawText_len(const char* text, size_t len, riCircle c, riColor color) {
+void rapp_drawText_len(const char* text, size_t len, rapp_circle c, rapp_color color) {
     RSGL_drawText_len(text, len, c, color);
 }
 
-void ri_setRFont(struct RFont_font* font) {
-    RSGL_setRFont(font);
-}
-
-
 #include <stdarg.h>
-const char* RI_strFmt(const char* string, ...) {
+const char* rapp_strFmt(const char* string, ...) {
    static char output[1024];
 
    va_list args;

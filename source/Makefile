@@ -6,8 +6,6 @@ detected_OS = windows
 OBJ_FILE = .o
 CARGS = -fPIC
 
-RENDERER = OPENGL
-
 OBJECTS =	gfx$(OBJ_FILE) \
 			core$(OBJ_FILE) \
 
@@ -43,7 +41,7 @@ else
 	LIBS += -lm
 endif
 
-CARGS += -D RI_RENDERER_$(RENDERER)
+CARGS = -I../include -D RAPP_RENDERER_OPENGL
 
 all:
 	make librilib$(LIB_EXT)
