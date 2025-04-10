@@ -779,9 +779,12 @@ void RSGL_setCenter(RSGL_point3D center) {
 void RSGL_setClearArgs(RSGL_bool clearArgs) {
     RSGL_argsClear = clearArgs;
 }
+
+#ifndef my_RSGL_clearArgs 
 void RSGL_clearArgs(void) {
     RSGL_args = (RSGL_drawArgs){NULL, 0, 0, { }, {0, 0, 0}, RSGL_POINT3D(-1, -1, -1), 0, 0};
 }
+#endif
 
 
 void RSGL_drawPoint(RSGL_point p, RSGL_color c) {

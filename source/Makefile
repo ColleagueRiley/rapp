@@ -8,6 +8,8 @@ CARGS = -fPIC
 
 OBJECTS =	gfx$(OBJ_FILE) \
 			core$(OBJ_FILE) \
+			ui$(OBJ_FILE) \
+			math$(OBJ_FILE) \
 
 
 # not using a cross compiler

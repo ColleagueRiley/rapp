@@ -52,6 +52,7 @@
 #define RSGL_triangle rapp_triangle
 #define RSGL_triangle3D rapp_triangle3D
 #define RSGL_pointF rapp_pointF
+#define RSGL_cube rapp_cube
 #define RSGL_point3D rapp_point3D
 #define RSGL_circle rapp_circle
 #define RSGL_circleF rapp_circleF
@@ -65,6 +66,8 @@
 #define RSGL_IMPLEMENTATION
 #define RSGL_INT_DEFINED
 #define RSGL_BOOL_DEFINED
+
+#define  my_RSGL_clearArgs 
 
 #include "deps/RSGL.h"
 
@@ -82,6 +85,23 @@
 #error no renderer defined
 #endif
 
+struct {
+    rapp_bool fill;
+} rapp_args = { RAPP_TRUE };
+
+void rapp_fill(rapp_bool fill) {
+    rapp_args.fill = fill;
+}
+
+void RSGL_clearArgs(void) {
+    RSGL_args = (RSGL_drawArgs){NULL, 0, 0, { }, {0, 0, 0}, RSGL_POINT3D(-1, -1, -1), 0, 0};
+    rapp_args.fill = RAPP_TRUE;
+}
+
+void rapp_clearArgs(void) {
+    RSGL_clearArgs();
+}
+
 void rapp_setTexture(rapp_texture texture) {
     RSGL_setTexture(texture);
 }
@@ -94,28 +114,12 @@ void rapp_setGradient(float* gradient, size_t len) {
     RSGL_setGradient(gradient, len);
 }
 
-void rapp_fill(rapp_bool fill) {
-
-}
-
 void rapp_center(rapp_point3D center) {
     RSGL_setCenter(center);
 }
 
 void rapp_setClearArgs(rapp_bool clearArgs) {
     RSGL_setClearArgs(clearArgs);
-}
-
-void rapp_clearArgs(void) {
-    RSGL_clearArgs();
-}
-
-rapp_rect rapp_alignRect(rapp_rect larger, rapp_rect smaller, u16 alignment) {
-
-}
-
-rapp_rectF rapp_alignRectF(rapp_rectF larger, rapp_rectF smaller, u16 alignment) {
-
 }
 
 rapp_mat4 rapp_initDrawMatrix(rapp_point3D center) {
@@ -179,63 +183,83 @@ void rapp_drawPointF(rapp_pointF p, rapp_color c) {
 }
 
 void rapp_drawTriangle(rapp_triangle t, rapp_color c) {
-    RSGL_drawTriangle(t, c);
+    rapp_drawTriangleF(rapp_createTriangleF((float)t.p1.x, (float)t.p1.y, (float)t.p2.x, (float)t.p2.y, (float)t.p3.x, (float)t.p3.y), c);
 }
 
 void rapp_drawTriangleF(rapp_triangleF t, rapp_color c) {
-    RSGL_drawTriangleF(t, c);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawTriangleFOutline(t, 1, c); break;
+        default: RSGL_drawTriangleF(t, c); break;
+    }
+
 }
 
 void rapp_drawTriangleHyp(rapp_pointF p, size_t angle, float hypotenuse, rapp_color color) {
     RSGL_drawTriangleHyp(p, angle, hypotenuse, color);
 }
 
-void rapp_drawRect(rapp_rect r, rapp_color c) {
-    RSGL_drawRect(r, c);
-}
+void rapp_drawRect(rapp_rect r, rapp_color c) { rapp_drawRectF(RAPP_RECTF(r.x, r.y, r.w, r.h), c); }
 
 void rapp_drawRectF(rapp_rectF r, rapp_color c) {
-    RSGL_drawRectF(r, c);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawRectFOutline(r, 1, c); break; 
+        default: RSGL_drawRectF(r, c); break;
+    }
 }
 
 void rapp_drawRoundRect(rapp_rect r, rapp_point rounding, rapp_color c) {
-    RSGL_drawRoundRect(r, rounding, c);
+    rapp_drawRoundRectF(RAPP_RECTF(r.x, r.y, r.w, r.h), rounding, c);
 }
 
 void rapp_drawRoundRectF(rapp_rectF r, rapp_point rounding, rapp_color c) {
-    RSGL_drawRoundRectF(r, rounding, c);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawRoundRectFOutline(r, rounding, 1, c); break;
+        default: RSGL_drawRoundRectF(r, rounding, c); break;
+    }
 }
 
 void rapp_drawPolygon(rapp_rect r, u32 sides, rapp_color c) {
-    RSGL_drawPolygon(r, sides, c);
+    rapp_drawPolygonF(RAPP_RECTF(r.x, r.y, r.w, r.h), sides, c);
 }
 
 void rapp_drawPolygonF(rapp_rectF r, u32 sides, rapp_color c) {
-    RSGL_drawPolygonF(r, sides, c);
+    switch (rapp_args.fill) {
+        case 0:  RSGL_drawPolygonFOutline(r, sides, 1, c); break;
+        default: RSGL_drawPolygonF(r, sides, c); break;
+    }
 }
 
 void rapp_drawArc(rapp_rect o, rapp_point arc, rapp_color color) {
-    RSGL_drawArc(o, arc, color);
+    rapp_drawArcF(RSGL_RECTF(o.x, o.y, o.w, o.h), RSGL_POINTF(arc.x, arc.y), color);
 }
 
 void rapp_drawArcF(rapp_rectF o, rapp_pointF arc, rapp_color color) {
-    RSGL_drawArcF(o, arc, color);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawArcFOutline(o, arc, 1, color); break;
+        default: RSGL_drawArcF(o, arc, color); break;
+    }    
 }
 
 void rapp_drawCircle(rapp_circle c, rapp_color color) {
-    RSGL_drawCircle(c, color);
+    rapp_drawCircleF(RAPP_CIRCLEF(c.x, c.y, c.d), color);
 }
 
 void rapp_drawCircleF(rapp_circleF c, rapp_color color) {
-    RSGL_drawCircleF(c, color);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawCircleFOutline(c, 1, color); break;
+        default: RSGL_drawCircleF(c, color); break;
+    }
 }
 
 void rapp_drawOval(rapp_rect o, rapp_color c) {
-    RSGL_drawOval(o, c);
+    rapp_drawOvalF(RAPP_RECTF(o.x, o.y, o.w, o.h), c);
 }
 
 void rapp_drawOvalF(rapp_rectF o, rapp_color c) {
-    RSGL_drawOvalF(o, c);
+    switch (rapp_args.fill) {
+        case 0: RSGL_drawOvalFOutline(o, 1, c); break; 
+        default: RSGL_drawOvalF(o, c); break;
+    }
 }
 
 void rapp_drawLine(rapp_point p1, rapp_point p2, u32 thickness, rapp_color c) {
@@ -333,11 +357,6 @@ rapp_image rapp_drawImage(rapp_image image, rapp_rect r) {
     RSGL_setTexture(texture);
 }
 
-rapp_image rapp_drawImageFile(const char* image, rapp_rect r) {
-
-}
-
-
 rapp_image rapp_loadImage(const char* image) {
     rapp_image img;
 
@@ -350,51 +369,8 @@ rapp_image rapp_loadImage(const char* image) {
     return img;
 }
 
-rapp_bool rapp_circleCollidePoint(rapp_circle c, rapp_point p) {
-}
-
-rapp_bool rapp_circleCollideRect(rapp_circle c, rapp_rect r) {
-}
-
-rapp_bool rapp_circleCollide(rapp_circle cir1, rapp_circle cir2) {
-}
-
-rapp_bool rapp_rectCollidePoint(rapp_rect r, rapp_point p) {
-}
-
-rapp_bool rapp_rectCollide(rapp_rect r, rapp_rect r2) {
-}
-
-rapp_bool rapp_pointCollide(rapp_point p, rapp_point p2) {
-}
-
-
-rapp_bool rapp_pointCollideF(rapp_pointF p, rapp_pointF p2) {
-}
-
-rapp_bool rapp_rectCollideF(rapp_rectF r, rapp_rectF r2) {
-}
-
-rapp_bool rapp_rectCollidePointF(rapp_rectF r, rapp_pointF p) {
-}
-
-rapp_bool rapp_circleCollideF(rapp_circleF cir1, rapp_circleF cir2) {
-}
-
-rapp_bool rapp_circleCollideRectF(rapp_circleF c, rapp_rectF r) {
-}
-
-rapp_bool rapp_circleCollidePointF(rapp_circleF c, rapp_pointF p) {
-}
-
 rapp_area rapp_textLineArea(const char* text, u32 fontSize, size_t textEnd, size_t line) {
     return RSGL_textLineArea(text, fontSize, textEnd, line);
-}
-
-rapp_circle rapp_alignText_len(const char* str, size_t str_len, rapp_circle c, rapp_rectF larger, u8 alignment) {
-}
-
-rapp_circle rapp_alignText(const char* str, rapp_circle c, rapp_rectF larger, u8 alignment) {
 }
 
 void rapp_drawText_pro(const char* text, size_t len, float spacing, rapp_circle c, rapp_color color) {
@@ -403,6 +379,22 @@ void rapp_drawText_pro(const char* text, size_t len, float spacing, rapp_circle 
 
 void rapp_drawText_len(const char* text, size_t len, rapp_circle c, rapp_color color) {
     RSGL_drawText_len(text, len, c, color);
+}
+
+void rapp_drawTriangle3D(rapp_triangle3D t, rapp_color c) {
+    RSGL_drawTriangle3D(t, c);
+}
+
+void rapp_drawPoint3D(rapp_point3D p, rapp_color c) {
+    RSGL_drawPoint3D(p, c);
+}
+
+void rapp_drawLine3D(rapp_point3D p1, rapp_point3D p2, u32 thickness, rapp_color c) {
+    RSGL_drawLine3D(p1, p2, thickness, c);
+}
+
+void rapp_drawCube(rapp_cube cube, rapp_color c) {
+    RSGL_drawCube(cube, c);
 }
 
 #include <stdarg.h>

@@ -152,10 +152,10 @@ typedef struct rapp_areaF { float w, h;} rapp_AreaF;
 typedef struct rapp_circle {
     i32 x, y, d;
 } rapp_circle;
-#define rapp_circle(x, y, d) (rapp_circle){(i32)x, (i32)y, (i32)d}
+#define RAPP_CIRCLE(x, y, d) (rapp_circle){(i32)x, (i32)y, (i32)d}
 
 typedef struct rapp_circleF { float x, y, d; } rapp_circleF;
-#define rapp_circleF(x, y, d) (rapp_circleF){(float)x, (float)y, (float)d}
+#define RAPP_CIRCLEF(x, y, d) (rapp_circleF){(float)x, (float)y, (float)d}
 
 typedef struct rapp_triangle {
     rapp_point p1, p2, p3;
@@ -170,9 +170,9 @@ typedef struct rapp_triangle3D {
 } rapp_triangle3D;
 #define RAPP_TRIANGLE3D(p1, p2, p3) (rapp_triangle3D){p1, p2, p3}
 
-#define RAPP_createtriangle(x1, y1, x2, y2, x3, y3) (rapp_triangle){{x1, y1}, {x2, y2}, {x3, y3}}
-#define RAPP_createtriangleF(x1, y1, x2, y2, x3, y3) (rapp_triangleF){{x1, y1}, {x2, y2}, {x3, y3}}
-#define RAPP_createtriangle3D(x1, y1, x2, y2, x3, y3) (rapp_triangle){{x1, y1, z1}, {x2, y2, z3}, {x3, y3, z3}}
+#define rapp_createTriangle(x1, y1, x2, y2, x3, y3) (rapp_triangle){{x1, y1}, {x2, y2}, {x3, y3}}
+#define rapp_createTriangleF(x1, y1, x2, y2, x3, y3) (rapp_triangleF){{x1, y1}, {x2, y2}, {x3, y3}}
+#define rapp_createTriangle3D(x1, y1, x2, y2, x3, y3) (rapp_triangle){{x1, y1, z1}, {x2, y2, z3}, {x3, y3, z3}}
 
 typedef struct rapp_cube {
     float x, y, z, w, h, l;
@@ -187,7 +187,7 @@ typedef struct rapp_image { rapp_texture tex; rapp_area srcSize; } rapp_image;
 
 /* 
 the color stucture is in 
-ABGR by default for performance reasons 
+aABGR by default for performance reasons 
 (converting color to hex for example)
 */
 typedef struct rapp_color {
@@ -513,7 +513,7 @@ RAPPAPI void rapp_window_maximize(rapp_window* win); /*!< maximize the window */
 RAPPAPI void rapp_window_setFullscreen(rapp_window* win, rapp_bool fullscreen); /*!< turn fullscreen on / off for a window */
 RAPPAPI void rapp_window_center(rapp_window* win); /*!< center the window */
 RAPPAPI void rapp_window_minimize(rapp_window* win); /*!< minimize the window (in taskbar (per OS))*/
-RAPPAPI void rapp_window_restore(rapp_window* win); /*!< restore the window from minimized (per OS)*/
+RAPPAPI void rapp_wiandow_restore(rapp_window* win); /*!< restore the window from minimized (per OS)*/
 RAPPAPI void rapp_window_setFloating(rapp_window* win, rapp_bool floating); /*!< make the window a floating window */
 RAPPAPI void rapp_window_setOpacity(rapp_window* win, u8 opacity); /*!< sets the opacity of a window */
 
@@ -728,7 +728,7 @@ typedef RAPP_ENUM(u8, rapp_alignment) {
     rapp_alignDown = RAPP_BIT(6),
 
     rapp_alignHorizontal = rapp_alignLeft | rapp_alignCenter | rapp_alignRight,
-    rapp_alignvertical = rapp_alignUp | rapp_alignMiddle | rapp_alignDown,
+    rapp_alignVertical = rapp_alignUp | rapp_alignMiddle | rapp_alignDown,
 /* ex : alignment = (rapp_alignLeft | rapp_alignLeft) */
 };
 
@@ -783,10 +783,9 @@ RAPPAPI rapp_mat4 rapp_translate(rapp_mat4 matrix, float x, float y, float z);
 
 RAPPAPI void rapp_drawPoint(rapp_point p, rapp_color c);
 RAPPAPI void rapp_drawPointF(rapp_pointF p, rapp_color c);
-RAPPAPI void rapp_plotLines(rapp_pointF* lines, size_t points_count, u32 thickness, rapp_color c);
 
-RAPPAPI void rapp_drawtriangle(rapp_triangle t, rapp_color c);
-RAPPAPI void rapp_drawtriangleF(rapp_triangleF t, rapp_color c);
+RAPPAPI void rapp_drawTriangle(rapp_triangle t, rapp_color c);
+RAPPAPI void rapp_drawTriangleF(rapp_triangleF t, rapp_color c);
 
 RAPPAPI void rapp_drawtriangleHyp(rapp_pointF p, size_t angle, float hypotenuse, rapp_color color);
 
@@ -812,12 +811,19 @@ RAPPAPI void rapp_drawOvalF(rapp_rectF o, rapp_color c);
 RAPPAPI void rapp_drawLine(rapp_point p1, rapp_point p2, u32 thickness, rapp_color c);
 RAPPAPI void rapp_drawLineF(rapp_pointF p1, rapp_pointF p2, u32 thickness, rapp_color c);
 
+/* 3D drawing */
+RAPPAPI void rapp_drawTriangle3D(rapp_triangle3D t, rapp_color c);
+RAPPAPI void rapp_drawPoint3D(rapp_point3D p, rapp_color c);
+RAPPAPI void rapp_drawLine3D(rapp_point3D p1, rapp_point3D p2, u32 thickness, rapp_color c);
+RAPPAPI void rapp_drawCube(rapp_cube cube, rapp_color c);
+
+
 /* 2D outlines */
 
 /* thickness means the thickness of the line */
 
-RAPPAPI void rapp_drawtriangleOutline(rapp_triangle t, u32 thickness, rapp_color c);
-RAPPAPI void rapp_drawtriangleFOutline(rapp_triangleF t, u32 thickness, rapp_color c);
+RAPPAPI void rapp_drawTriangleOutline(rapp_triangle t, u32 thickness, rapp_color c);
+RAPPAPI void rapp_drawTriangleFOutline(rapp_triangleF t, u32 thickness, rapp_color c);
 
 RAPPAPI void rapp_drawRectOutline(rapp_rect r, u32 thickness, rapp_color c);
 RAPPAPI void rapp_drawRectFOutline(rapp_rectF r, u32 thickness, rapp_color c);
