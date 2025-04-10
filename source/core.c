@@ -75,6 +75,8 @@
 #define RFont_texture rapp_texture
 #define RFont_font rapp_font
 #define RSGL_area rapp_area
+#define RSGL_cube rapp_cube
+#define RSGL_camera rapp_camera
 
 typedef u8 b8;
 
@@ -84,6 +86,35 @@ typedef u8 b8;
 #else
 #error no renderer defined
 #endif
+
+#include "deps/stb_image.h"
+
+
+u8* rapp_window_setIconImage(rapp_window* win, const char* file) {
+    int x, y, c;
+    u8* image = stbi_load(file, &x, &y, &c, 4);
+        
+    RGFW_window_setIcon((RGFW_window*)win->src, image, RGFW_AREA(x, y), c);
+    return image;
+}
+
+void rapp_window_freeIconImage(u8* buffer) { free(buffer); }
+
+rapp_mouseImage rapp_window_loadMouseImage(rapp_window* win, const char* file) {
+    rapp_mouseImage image;
+
+    int x, y, c;
+    image.image = stbi_load(file, &x, &y, &c, 4);
+    
+    image.mouse = RGFW_loadMouse(image.image, RGFW_AREA(x, y), c);
+    return image;
+}
+
+
+void rapp_window_freeMouseImage(rapp_mouseImage icon) {
+    RGFW_freeMouse(icon.mouse);
+    free(icon.image);
+}
 
 /* */
 void rapp_window_draw(rapp_window* win) {

@@ -537,6 +537,14 @@ RAPPAPI void rapp_window_setName(rapp_window* win,
 	const char* name
 );
 
+
+RAPPAPI u8* rapp_window_setIconImage(rapp_window* win, const char* file);
+RAPPAPI void rapp_window_freeIconImage(u8* buffer);
+
+typedef struct rapp_mouseImage { u8* image;  rapp_mouse* mouse; } rapp_mouseImage;
+RAPPAPI rapp_mouseImage rapp_window_loadMouseImage(rapp_window* win, const char* file);
+RAPPAPI void rapp_window_freeMouseImage(rapp_mouseImage  mouse);
+
 RAPPAPI rapp_bool rapp_window_setIcon(rapp_window* win, /*!< source window */
 	u8* icon /*!< icon bitmap */,
 	rapp_area a /*!< width and height of the bitmap */,
@@ -775,9 +783,28 @@ void RFont_bitmap_to_atlas(rapp_rsoft_texture atlas, u8* bitmap, float x, float 
 */
 
 /* rapp_ translation */
+typedef struct rapp_camera {
+    rapp_point3D pos;
+    float fov; 
+    float pitch, yaw; 
+} rapp_camera;
+
+RAPPAPI rapp_mat4 rapp_getCameraMatrix(rapp_camera camera);
+RAPPAPI rapp_mat4 rapp_getCameraMatrixEx(rapp_camera camera, float ratio, float maxPitch, float min, float max);
+
+RAPPAPI void rapp_setGlobalMatrix(rapp_mat4 matrix);
+RAPPAPI void rapp_resetGlobalMatrix();
+
+
+RAPPAPI rapp_mat4 rapp_loadIdentity(void);
 RAPPAPI rapp_mat4 rapp_mat4Multiply(float left[16], float right[16]);
 RAPPAPI rapp_mat4 rapp_rotate(rapp_mat4 matrix, float angle, float x, float y, float z); 
 RAPPAPI rapp_mat4 rapp_translate(rapp_mat4 matrix, float x, float y, float z);
+RAPPAPI rapp_mat4 rapp_perspective(rapp_mat4 matrix, float fovY, float aspect, float zNear, float zFar);
+RAPPAPI rapp_mat4 rapp_ortho(rapp_mat4 matrix, float left, float right, float bottom, float top, float znear, float zfar);
+
+
+
 /* 2D shape drawing */
 /* in the function names, F means float */
 

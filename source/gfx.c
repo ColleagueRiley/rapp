@@ -60,7 +60,7 @@
 #define RSGL_programInfo rapp_programInfo
 #define RSGL_texture rapp_texture
 #define RSGL_area rapp_area
-
+#define RSGL_camera rapp_camera
 
 #define RSGL_NO_DEPS_FOLDER
 #define RSGL_IMPLEMENTATION
@@ -160,6 +160,23 @@ void rapp_renderDeleteProgram(rapp_programInfo program) {
 
 void rapp_renderSetShaderValue(u32 program, char* var, float value[], u8 len) {
     RSGL_renderSetShaderValue(program, var, value, len);
+}
+
+rapp_mat4 rapp_getCameraMatrix(rapp_camera camera) { return rapp_getCameraMatrix(camera); }
+rapp_mat4 rapp_getCameraMatrixEx(rapp_camera camera, float ratio, float maxPitch, float min, float max) {
+    return rapp_getCameraMatrixEx(camera, ratio, maxPitch, min, max);
+}
+
+void rapp_setGlobalMatrix(rapp_mat4 matrix) { RSGL_setGlobalMatrix(matrix); }
+void rapp_resetGlobalMatrix() { RSGL_resetGlobalMatrix(); }
+
+
+rapp_mat4 rapp_loadIdentity(void) { return RSGL_loadIdentity(); }
+rapp_mat4 rapp_perspective(rapp_mat4 matrix, float fovY, float aspect, float zNear, float zFar) {
+    return rapp_perspective(matrix, fovY, aspect, zNear, zFar);
+}
+rapp_mat4 rapp_ortho(rapp_mat4 matrix, float left, float right, float bottom, float top, float znear, float zfar) {
+    return rapp_ortho(matrix, left, right, bottom, top, znear, zfar);
 }
 
 rapp_mat4 rapp_mat4Multiply(float left[16], float right[16]) {
