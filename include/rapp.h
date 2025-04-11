@@ -146,6 +146,9 @@ typedef struct rapp_pointF { float x, y; } rapp_pointF;
 typedef struct rapp_point3D { float x, y, z; } rapp_point3D;
 #define RAPP_POINT3D(x, y, z) (rapp_point3D){(float)x, (float)y, (float)z}
 
+typedef struct rapp_point4D { float x, y, z, w; } rapp_point4D;
+#define RAPP_POINT4D(x, y, z, w) (rapp_point3D){(float)x, (float)y, (float)z, (float)w}
+
 typedef struct rapp_areaF { float w, h;} rapp_AreaF;
 #define RAPP_AREAF(w, h) (rapp_areaF){(float)w, (float)h}
 
@@ -802,7 +805,7 @@ RAPPAPI rapp_mat4 rapp_rotate(rapp_mat4 matrix, float angle, float x, float y, f
 RAPPAPI rapp_mat4 rapp_translate(rapp_mat4 matrix, float x, float y, float z);
 RAPPAPI rapp_mat4 rapp_perspective(rapp_mat4 matrix, float fovY, float aspect, float zNear, float zFar);
 RAPPAPI rapp_mat4 rapp_ortho(rapp_mat4 matrix, float left, float right, float bottom, float top, float znear, float zfar);
-
+RAPPAPI rapp_mat4 rapp_scale(rapp_mat4 matrix, float x, float y, float z);
 
 
 /* 2D shape drawing */
@@ -989,6 +992,34 @@ RAPPAPI rapp_bool rapp_pointCollideF(rapp_pointF p, rapp_pointF p2);
 
 RAPPAPI rapp_bool rapp_cubeCollideVec3(rapp_cube cube, rapp_point3D p); 
 RAPPAPI rapp_bool rapp_cubeCollide(rapp_cube r, rapp_cube r2);
+
+/* ** vector math ** */
+RAPPAPI rapp_point rapp_pointAdd(rapp_point v1, rapp_point v2);
+RAPPAPI rapp_pointF rapp_pointFAdd(rapp_pointF v1, rapp_pointF v2);
+RAPPAPI rapp_point3D rapp_point3DAdd(rapp_point3D v1, rapp_point3D v2);
+RAPPAPI rapp_point4D rapp_point4DAdd(rapp_point4D v1, rapp_point4D v2);
+
+RAPPAPI rapp_point rapp_pointSubrtact(rapp_point v1, rapp_point v2);
+RAPPAPI rapp_pointF rapp_pointFSubrtact(rapp_pointF v1, rapp_pointF v2);
+RAPPAPI rapp_point3D rapp_point3DSubtract(rapp_point3D v1, rapp_point3D v2);
+RAPPAPI rapp_point4D rapp_point4DSubtract(rapp_point4D v1, rapp_point4D v2);
+
+RAPPAPI rapp_point rapp_pointMultiply(rapp_point v1, rapp_point v2);
+RAPPAPI rapp_pointF rapp_pointFMultiply(rapp_pointF v1, rapp_pointF v2);
+RAPPAPI rapp_point3D rapp_point3DMultiply(rapp_point3D v1, rapp_point3D v2);
+RAPPAPI rapp_point4D rapp_point4DMultiply(rapp_point4D v1, rapp_point4D v2);
+
+RAPPAPI rapp_point rapp_pointDivide(rapp_point v1, rapp_point v2);
+RAPPAPI rapp_pointF rapp_pointFDivide(rapp_pointF v1, rapp_pointF v2);
+RAPPAPI rapp_point3D rapp_point3DDivide(rapp_point3D v1, rapp_point3D v2);
+RAPPAPI rapp_point4D rapp_point4DDivide(rapp_point4D v1, rapp_point4D v2);
+
+RAPPAPI rapp_point rapp_pointMultiplyMat4(rapp_point vec, rapp_mat4 matrix); 
+RAPPAPI rapp_pointF rapp_pointFMultiplyMat4(rapp_pointF vec, rapp_mat4 matrix); 
+RAPPAPI rapp_point3D rapp_point3DMultiplyMat4(rapp_point3D vec, rapp_mat4 matrix); 
+RAPPAPI rapp_point4D rapp_point4DMultiplyMat4(rapp_point4D vec, rapp_mat4 matrix); 
+
+RAPPAPI rapp_point3D rapp_point4ToVec3(rapp_point4D v);
 
 typedef void (*rapp_proc)(void); // function pointer equivalent of void*
 
