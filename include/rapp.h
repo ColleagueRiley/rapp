@@ -1019,6 +1019,16 @@ RAPPAPI rapp_pointF rapp_pointFMultiplyMat4(rapp_pointF vec, rapp_mat4 matrix);
 RAPPAPI rapp_point3D rapp_point3DMultiplyMat4(rapp_point3D vec, rapp_mat4 matrix); 
 RAPPAPI rapp_point4D rapp_point4DMultiplyMat4(rapp_point4D vec, rapp_mat4 matrix); 
 
+RAPPAPI rapp_point rapp_pointToWorld(rapp_point v, float screenWidth, float screenHeight);
+RAPPAPI rapp_pointF rapp_pointFToWorld(rapp_pointF v, float screenWidth, float screenHeight);
+RAPPAPI rapp_point3D rapp_point3DToWorld(rapp_point3D v, float screenWidth, float screenHeight);
+RAPPAPI rapp_point4D rapp_point4DToWorld(rapp_point4D v, float screenWidth, float screenHeight);
+
+RAPPAPI rapp_point rapp_pointToScreen(rapp_point v, float screenWidth, float screenHeight);
+RAPPAPI rapp_pointF rapp_pointFToScreen(rapp_pointF v, float screenWidth, float screenHeight);
+RAPPAPI rapp_point3D rapp_point3DToScreen(rapp_point3D v, float screenWidth, float screenHeight);  
+RAPPAPI rapp_point4D rapp_point4DToScreen(rapp_point4D v, float screenWidth, float screenHeight);
+
 RAPPAPI rapp_point3D rapp_point4ToVec3(rapp_point4D v);
 
 typedef void (*rapp_proc)(void); // function pointer equivalent of void*

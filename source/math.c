@@ -93,3 +93,34 @@ rapp_point4D rapp_point4DMultiplyMat4(rapp_point4D vec, rapp_mat4 matrix) { retu
 rapp_point3D rapp_point4ToVec3(rapp_point4D v) { return rmVec4ToVec3(v);  }
 
 
+rapp_point rapp_pointToWorld(rapp_point v, float screenWidth, float screenHeight) {  
+    rapp_pointF p = rmVec2ToWorld(RM_VEC2(v.x, v.y), screenWidth, screenHeight);  
+    return RAPP_POINT(p.x, p.y);
+}
+rapp_pointF rapp_pointFToWorld(rapp_pointF v, float screenWidth, float screenHeight) {  
+    return rmVec2ToWorld(v, screenWidth, screenHeight);  
+}
+rapp_point3D rapp_point3DToWorld(rapp_point3D v, float screenWidth, float screenHeight) {  
+   return rmVec3ToWorld(v, screenWidth, screenHeight); 
+}
+rapp_point4D rapp_point4DToWorld(rapp_point4D v, float screenWidth, float screenHeight) {  
+   return rmVec4ToWorld(v, screenWidth, screenHeight); 
+}
+
+rapp_point rapp_pointToScreen(rapp_point v, float screenWidth, float screenHeight) { 
+    rapp_pointF p = rmVec2ToScreen(RM_VEC2(v.x, v.y), screenWidth, screenHeight);
+    return RAPP_POINT(p.x, p.y);
+}
+
+rapp_pointF rapp_pointFToScreen(rapp_pointF v, float screenWidth, float screenHeight) { 
+    return rmVec2ToScreen(v, screenWidth, screenHeight);
+}
+
+rapp_point3D rapp_point3DToScreen(rapp_point3D v, float screenWidth, float screenHeight) {  
+    return rmVec3ToScreen(v, screenWidth, screenHeight);  
+}
+
+rapp_point4D rapp_point4DToScreen(rapp_point4D v, float screenWidth, float screenHeight) {
+    return rmVec4ToScreen(v, screenWidth, screenHeight);
+}
+
