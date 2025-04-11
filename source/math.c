@@ -63,8 +63,8 @@ rapp_pointF rapp_pointFAdd(rapp_pointF v1, rapp_pointF v2) { return rmVec2Add(v1
 rapp_point3D rapp_point3DAdd(rapp_point3D v1, rapp_point3D v2) { return rmVec3Add(v1, v2); }
 rapp_point4D rapp_point4DAdd(rapp_point4D v1, rapp_point4D v2) {  return rmVec4Add(v1, v2); }
 
-rapp_pointF rapp_pointFSubrtact(rapp_pointF v1, rapp_pointF v2) { return rmVec2Subtract(v1, v2); }
-rapp_point3D rapp_point3DSubtract(rapp_point3D v1, rapp_point3D v2) { return rm3VecSubtract(v1, v2); }
+rapp_pointF rapp_pointFSubrtact(rapp_pointF v1, rapp_pointF v2) { return rmVec2Subrtact(v1, v2); }
+rapp_point3D rapp_point3DSubtract(rapp_point3D v1, rapp_point3D v2) { return rmVec3Subtract(v1, v2); }
 rapp_point4D rapp_point4DSubtract(rapp_point4D v1, rapp_point4D v2) { return rmVec4Subtract(v1, v2); }
 
 rapp_pointF rapp_pointFMultiply(rapp_pointF v1, rapp_pointF v2) { return rmVec2Multiply(v1, v2); }
