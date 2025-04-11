@@ -89,6 +89,7 @@ typedef u8 b8;
 
 #include "deps/stb_image.h"
 
+void rapp_setRenderer(rapp_renderer renderer) { RSGL_setRenderer(*(((RSGL_renderer*)(rapp_renderer*)&renderer))); }
 
 u8* rapp_window_setIconImage(rapp_window* win, const char* file) {
     int x, y, c;

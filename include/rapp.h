@@ -930,6 +930,48 @@ extra
 *******
 */
 
+typedef struct RAPP_BATCH {
+    size_t start, len; /* when batch starts and it's length */
+    u32 type;
+    rapp_texture tex;
+    float lineWidth;
+    rapp_mat4 matrix;
+} RAPP_BATCH; /* batch data type for rendering */
+
+typedef struct RAPP_RENDER_INFO {
+    RAPP_BATCH* batches;
+
+    float* verts;
+    float* texCoords;
+    float* colors;
+
+    size_t len; /* number of batches*/
+    size_t vert_len; /* number of verts */
+    rapp_mat4 matrix;
+} RAPP_RENDER_INFO; /* render data */
+
+typedef struct rapp_renderer {
+    void (* batch)(RAPP_RENDER_INFO* info);
+    void (* init)(void* proc, RAPP_RENDER_INFO* info); /* init render backend */
+    void (* free)(void); /* free render backend */
+    void (* clear)(float r, float g, float b, float a);
+    void (* viewport)(i32 x, i32 y, i32 w, i32 h);
+    rapp_texture (* createTexture)(u8* bitmap, rapp_area memsize,  u8 channels);
+    void (* updateTexture)(rapp_texture texture, u8* bitmap, rapp_area memsize, u8 channels);
+    void (* deleteTexture)(rapp_texture tex);
+    void (* scissorStart)(rapp_rectF scissor);
+    void (* scissorEnd)(void);
+    rapp_programInfo (*createProgram)(const char* VShaderCode, const char* FShaderCode, const char* posName, const char* texName, const char* colorName);
+    void (* deleteProgram)(rapp_programInfo program);
+    void (* setShaderValue)(u32 program, char* var, float value[], u8 len);
+    rapp_texture (* createAtlas)(u32 atlasWidth, u32 atlasHeight);
+    u8 (* resizeAtlas)(rapp_texture* atlas, u32 newWidth, u32 newHeight);
+    void (* bitmapToAtlas)(rapp_texture atlas, u8* bitmap, float x, float y, float w, float h);
+} rapp_renderer;
+
+
+RAPPAPI void rapp_setRenderer(rapp_renderer renderer);
+
 /* ** collision functions ** */
 RAPPAPI rapp_bool rapp_circleCollidePoint(rapp_circle c, rapp_point p);
 RAPPAPI rapp_bool rapp_circleCollideRect(rapp_circle c, rapp_rect r);
@@ -944,6 +986,9 @@ RAPPAPI rapp_bool rapp_circleCollideF(rapp_circleF cir1, rapp_circleF cir2);
 RAPPAPI rapp_bool rapp_rectCollidePointF(rapp_rectF r, rapp_pointF p);
 RAPPAPI rapp_bool rapp_rectCollideF(rapp_rectF r, rapp_rectF r2);
 RAPPAPI rapp_bool rapp_pointCollideF(rapp_pointF p, rapp_pointF p2);
+
+RAPPAPI rapp_bool rapp_cubeCollideVec3(rapp_cube cube, rapp_point3D p); 
+RAPPAPI rapp_bool rapp_cubeCollide(rapp_cube r, rapp_cube r2);
 
 typedef void (*rapp_proc)(void); // function pointer equivalent of void*
 
