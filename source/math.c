@@ -46,7 +46,7 @@ rapp_point rapp_pointAdd(rapp_point v1, rapp_point v2) {
     return RAPP_POINT(output.x, output.y);
 }
 rapp_point rapp_pointSubrtact(rapp_point v1, rapp_point v2) { 
-    rmVec2 output = rmVec2Subrtact(RAPP_POINTF(v1.x, v2.y), RAPP_POINTF(v1.x, v2.y));
+    rmVec2 output = rmVec2Subtract(RAPP_POINTF(v1.x, v2.y), RAPP_POINTF(v1.x, v2.y));
     return RAPP_POINT(output.x, output.y);
 }
 rapp_point rapp_pointMultiply(rapp_point v1, rapp_point v2) { 
@@ -63,7 +63,7 @@ rapp_pointF rapp_pointFAdd(rapp_pointF v1, rapp_pointF v2) { return rmVec2Add(v1
 rapp_point3D rapp_point3DAdd(rapp_point3D v1, rapp_point3D v2) { return rmVec3Add(v1, v2); }
 rapp_point4D rapp_point4DAdd(rapp_point4D v1, rapp_point4D v2) {  return rmVec4Add(v1, v2); }
 
-rapp_pointF rapp_pointFSubrtact(rapp_pointF v1, rapp_pointF v2) { return rmVec2Subrtact(v1, v2); }
+rapp_pointF rapp_pointFSubrtact(rapp_pointF v1, rapp_pointF v2) { return rmVec2Subtract(v1, v2); }
 rapp_point3D rapp_point3DSubtract(rapp_point3D v1, rapp_point3D v2) { return rmVec3Subtract(v1, v2); }
 rapp_point4D rapp_point4DSubtract(rapp_point4D v1, rapp_point4D v2) { return rmVec4Subtract(v1, v2); }
 
@@ -79,7 +79,7 @@ rapp_point3D rapp_point3DDivide(rapp_point3D v1, rapp_point3D v2) { return rmVec
 rapp_point4D rapp_point4DDivide(rapp_point4D v1, rapp_point4D v2) { return rmVec4Divide(v1, v2); }
 
 rapp_point rapp_pointMultiplyMat4(rapp_point vec, rapp_mat4 matrix) {
-    rmVec2 vector = rmVec2MultiplyMat4((rmVec2){vec.x, vec.y}, matrix); 
+    rapp_pointF vector = rmVec2MultiplyMat4((rmVec2){vec.x, vec.y}, matrix); 
     return RAPP_POINT(vector.x, vector.y);
 }
 
@@ -122,5 +122,91 @@ rapp_point3D rapp_point3DToScreen(rapp_point3D v, float screenWidth, float scree
 
 rapp_point4D rapp_point4DToScreen(rapp_point4D v, float screenWidth, float screenHeight) {
     return rmVec4ToScreen(v, screenWidth, screenHeight);
+}
+
+
+float rapp_clamp(float value, float min, float max) {
+    return rmClamp(value, min, max);
+}
+
+float rapp_normalize(float value, float start, float end) {
+    return rmNormalize(value, start, end);
+}
+
+float rapp_lerp(float start, float end, float amount) {
+    return rmLerp(start, end, amount);
+}
+
+float rapp_remap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd) {
+    return rmRemap(value, inputStart, inputEnd, outputStart, outputEnd);
+}
+
+float rapp_wrap(float value, float min, float max) {
+    return rmWrap(value, min, max);
+}
+
+float rapp_pointDist(rapp_point v1, rapp_point v2) {
+    return rmVec2Dist(RAPP_POINTF(v1.x, v1.y), RAPP_POINTF(v2.x, v1.y));
+}
+
+float rapp_pointFDist(rapp_pointF v1, rapp_pointF v2) {
+    return rmVec2Dist(v1, v2);
+}
+
+float rapp_point3Dist(rapp_point3D v1, rapp_point3D v2) {
+    return rmVec3Dist(v1, v2);
+}
+
+float rapp_point4Dist(rapp_point4D v1, rapp_point4D v2) {
+    return rmVec4Dist(v1, v2);
+}
+
+float rapp_pointDot(rapp_point v, rapp_point v1) {
+    return rmVec2Dot(RAPP_POINTF(v.x, v.y), RAPP_POINTF(v1.x, v1.y));
+}
+
+float rapp_pointFDot(rapp_pointF v, rapp_pointF v1) {
+    return rmVec2Dot(v, v1);
+}
+
+float rapp_point3Dot(rapp_point3D v, rapp_point3D v1) {
+    return rmVec3Dot(v, v1);  
+}
+
+float rapp_point4DDot(rapp_point4D v, rapp_point4D v1) {
+    return rmVec4Dot(v, v1);
+}
+
+float rapp_pointCross(rapp_point v, rapp_point v1) {
+    return rmVec2Cross(RAPP_POINTF(v.x, v.y), RAPP_POINTF(v1.x, v1.y));
+}
+
+float rapp_pointFCross(rapp_pointF v, rapp_pointF v1) {
+    return rmVec2Cross(v, v1);
+}
+
+float rapp_point3DCross(rapp_point3D v, rapp_point3D v1) {
+    return rmVec3Cross(v, v1);
+}
+
+float rapp_point4DCross(rapp_point4D v, rapp_point4D v1) {
+    return rmVec4Cross(v, v1);
+}
+
+
+rapp_bool rapp_pointCmp(rapp_point v, rapp_point v1) {
+    return rmVec2Cmp(RAPP_POINTF(v.x, v.y), RAPP_POINTF(v1.x, v1.y));
+}
+
+rapp_bool rapp_pointFCmp(rapp_pointF v, rapp_pointF v1) {
+    return rmVec2Cmp(v, v1);
+}
+
+rapp_bool rapp_point3DCmp(rapp_point3D v, rapp_point3D v1) {
+    return rmVec3Cmp(v, v1);
+}
+
+rapp_bool rapp_point4DCmp(rapp_point4D v, rapp_point4D v1) {
+    return rmVec4Cmp(v, v1);
 }
 

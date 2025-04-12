@@ -1031,6 +1031,33 @@ RAPPAPI rapp_point4D rapp_point4DToScreen(rapp_point4D v, float screenWidth, flo
 
 RAPPAPI rapp_point3D rapp_point4ToVec3(rapp_point4D v);
 
+/* extra math */
+RAPPAPI float rapp_clamp(float value, float min, float max);
+RAPPAPI float rapp_normalize(float value, float start, float end);
+RAPPAPI float rapp_lerp(float start, float end, float amount);
+RAPPAPI float rapp_wrap(float value, float min, float max);
+
+RAPPAPI float rapp_pointDist(rapp_point v1, rapp_point v2);
+RAPPAPI float rapp_pointFDist(rapp_pointF v1, rapp_pointF v2);
+
+RAPPAPI float rapp_point3Dist(rapp_point3D v1, rapp_point3D v2);
+
+RAPPAPI float rapp_point4Dist(rapp_point4D v1, rapp_point4D v2);
+
+RAPPAPI float rapp_pointFDot(rapp_pointF v, rapp_pointF v1);
+RAPPAPI float rapp_point3Dot(rapp_point3D v, rapp_point3D v1);
+RAPPAPI float rapp_point4DDot(rapp_point4D v, rapp_point4D v1);
+
+RAPPAPI float rapp_pointCross(rapp_point v, rapp_point v1);
+RAPPAPI float rapp_pointFCross(rapp_pointF v, rapp_pointF v1);
+RAPPAPI float rapp_point3DCross(rapp_point3D v, rapp_point3D v1);
+RAPPAPI float rapp_point4DCross(rapp_point4D v, rapp_point4D v1);
+
+RAPPAPI rapp_bool rapp_pointCmp(rapp_point v, rapp_point v1);
+RAPPAPI rapp_bool rapp_pointFCmp(rapp_pointF v, rapp_pointF v1);
+RAPPAPI rapp_bool rapp_point3DCmp(rapp_point3D v, rapp_point3D v1);
+RAPPAPI rapp_bool rapp_point4DCmp(rapp_point4D v, rapp_point4D v1);
+
 typedef void (*rapp_proc)(void); // function pointer equivalent of void*
 
 /*! native API functions */
